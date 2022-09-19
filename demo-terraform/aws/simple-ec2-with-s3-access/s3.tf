@@ -43,3 +43,28 @@ resource "aws_s3_bucket_public_access_block" "bucket" {
 #         }
 #     }
 # }
+
+resource "aws_s3_bucket_policy" "bucketpolicy" {
+  bucket = aws_s3_bucket.bucket.id
+
+  policy = <<POLICY
+        {
+            "Version": "2012-10-17",
+            "Statement": [
+              {
+                  "Sid": "bucket-restrict-access-to-users-or-roles",
+                  "Effect": "Allow",
+                  "Principal": [
+                    {
+                       "AWS": [
+                          "<aws_policy_role_arn>"
+                        ]
+                    }
+                  ],
+                  "Action": "s3:GetObject",
+                  "Resource": "arn:aws:s3:::bucket/*"
+              }
+            ]
+        }
+    POLICY
+}
